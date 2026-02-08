@@ -1,0 +1,2 @@
+name,env,color,aws_profile,k8s_context
+local-dev,dev,blue,default,docker-desktop

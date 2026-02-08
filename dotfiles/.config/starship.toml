@@ -1,0 +1,112 @@
+# Get editor completions based on the config schema
+"$schema" = 'https://starship.rs/config-schema.json'
+
+format = """
+[](rose)\
+$os\
+$username\
+[](bg:peach fg:rose)\
+$directory\
+[](bg:green fg:peach)\
+$c\
+$elixir\
+$elm\
+$golang\
+$haskell\
+$java\
+$julia\
+$nodejs\
+$nim\
+$rust\
+$scala\
+[](fg:green bg:sapphire)\
+$docker_context\
+[](fg:sapphire bg:lavender)\
+$time\
+[ ](fg:lavender)\
+$line_break$character"""
+
+# Disable the blank line at the start of the prompt
+add_newline = true
+
+# Set custom color palette
+palette = 'catppuccin_mocha'
+
+[palettes.catppuccin_mocha]
+rose = '#f5e0dc'
+peach = '#fab387'
+yellow = '#f9e2af'
+green = '#a6e3a1'
+sapphire = '#74c7ec'
+lavender = '#b4befe'
+base = '#1e1e2e'
+
+[os]
+disabled = false
+style = "bg:rose fg:base"
+
+[username]
+show_always = true
+style_user = "bg:rose fg:base"
+format = '[$user]($style)'
+
+[directory]
+style = "bg:peach fg:base"
+format = "[ $path ]($style)"
+truncation_length = 3
+truncation_symbol = "…/"
+
+[directory.substitutions]
+"Documents" = "󰈙 "
+"Downloads" = "󱑢 "
+"Music" = "󰝚 "
+"Pictures" = "󰄄 "
+
+[nodejs]
+symbol = ""
+style = "bg:green fg:base"
+format = '[[ $symbol ($version) ]($style)]($style)'
+
+[rust]
+symbol = ""
+style = "bg:green fg:base"
+format = '[[ $symbol ($version) ]($style)]($style)'
+
+[golang]
+symbol = ""
+style = "bg:green fg:base"
+format = '[[ $symbol ($version) ]($style)]($style)'
+
+[php]
+symbol = ""
+style = "bg:green fg:base"
+format = '[[ $symbol ($version) ]($style)]($style)'
+
+[java]
+symbol = " "
+style = "bg:green fg:base"
+format = '[[ $symbol ($version) ]($style)]($style)'
+
+[kotlin]
+symbol = ""
+style = "bg:green fg:base"
+format = '[[ $symbol ($version) ]($style)]($style)'
+
+[haskell]
+symbol = ""
+style = "bg:green fg:base"
+format = '[[ $symbol ($version) ]($style)]($style)'
+
+[python]
+symbol = ""
+style = "bg:green fg:base"
+format = '[[ $symbol ($version) ]($style)]($style)'
+
+[docker_context]
+symbol = ""
+style = "bg:sapphire fg:base"
+format = '[[ $symbol $context ]($style)]($style)'
+
+[character]
+success_symbol = '[➜](bold green)'
+error_symbol = '[➜](bold red)'

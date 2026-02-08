@@ -1,0 +1,22 @@
+[window]
+padding = { x = 15, y = 15 }
+dynamic_title = true
+
+[font]
+size = 14.0
+
+[font.normal]
+family = "JetBrainsMono Nerd Font"
+style = "Medium"
+
+[font.bold]
+family = "JetBrainsMono Nerd Font"
+style = "Bold"
+
+[colors.primary]
+background = '#1e1e2e' # Matches the 'base' in Starship
+foreground = '#cdd6f4'
+
+[selection]
+# Automatically copy to clipboard when a selection is made
+save_to_clipboard = true

@@ -1,0 +1,63 @@
+#!/bin/zsh
+
+export CX_CONFIG="$HOME/.config/cx/contexts.csv"
+export EDITOR="vi"
+
+cx() {
+  if [[ -z "$1" ]] || [[ ! -f "$CX_CONFIG" ]]; then
+    echo "Usage: cx {set|list|health|edit}"
+    return 1
+  fi
+
+  # --- Action: LIST ---
+  if [[ "$1" == "list" ]]; then
+    echo ""
+    printf "\033[38;2;116;199;236m\033[0m\033[48;2;116;199;236;38;2;30;30;46m AVAILABLE CONTEXTS \033[0m\033[38;2;116;199;236m\033[0m\n"
+    awk -F',' 'NR > 1 {printf "  \033[38;2;116;199;236m•\033[0m \033[1m%-15s\033[0m (%s)\n", $1, $2}' "$CX_CONFIG"
+    echo ""
+
+  # --- Action: HEALTH ---
+  elif [[ "$1" == "health" ]]; then
+    local K_CTX=$(kubectl config current-context 2>/dev/null || echo "NA")
+    local DISPLAY_NAME="${NAME:-NA}"
+    local DISPLAY_AWS="${AWS_PROFILE:-NA}"
+    
+    printf "\033[38;2;245;224;220m\033[0m\033[48;2;245;224;220;38;2;30;30;46m PANE CONTEXT: ${DISPLAY_NAME} \033[0m\033[38;2;245;224;220m\033[0m\n"
+    echo -e "🩺 Status: \033[38;2;250;179;135m${DISPLAY_AWS}\033[0m / \033[38;2;180;190;254m${K_CTX}\033[0m"
+    echo -e "\033[38;2;88;91;112m----------------------------------------------------\033[0m"
+    [[ "$DISPLAY_AWS" != "NA" ]] && aws sts get-caller-identity --request-timeout 2 >/dev/null 2>&1 && echo -e "\033[38;2;166;227;161m●\033[0m AWS: Online" || echo -e "\033[38;2;243;139;168m●\033[0m AWS: Offline"
+    [[ "$K_CTX" != "NA" ]] && kubectl cluster-info --request-timeout=2s >/dev/null 2>&1 && echo -e "\033[38;2;166;227;161m●\033[0m K8s: Online" || echo -e "\033[38;2;243;139;168m●\033[0m K8s: Offline"
+
+  # --- Action: SET ---
+  elif [[ "$1" == "set" ]]; then
+    local target="$2"
+    local row=$(awk -F',' -v t="$target" 'NR > 1 && $1 == t {print $0}' "$CX_CONFIG")
+    [[ -z "$row" ]] && echo "❌ Context '$target' not found." && return 1
+
+    local NAME=$(echo "$row" | cut -d',' -f1)
+    local ENV=$(echo "$row" | cut -d',' -f2)
+    local COLOR=$(echo "$row" | cut -d',' -f3)
+    local ROLE=$(echo "$row" | cut -d',' -f4)
+    local KCTX=$(echo "$row" | cut -d',' -f5)
+    [[ -z "$ROLE" || "$ROLE" == "default" ]] && ROLE="NA"
+
+    if [[ -z "$TMUX" ]]; then
+      local SID="term-$(date +%s)"
+      printf "\033[38;2;250;179;135m\033[0m\033[48;2;250;179;135;38;2;30;30;46m BOOTSTRAP: $NAME \033[0m\033[38;2;250;179;135m\033[0m\n"
+      [[ "$ROLE" != "NA" ]] && (aws sts get-caller-identity --profile "$ROLE" >/dev/null 2>&1 || aws sso login --profile "$ROLE")
+      tmuxinator start platform_context name="$SID" context_name="$NAME" env="$ENV" color="$COLOR" aws_role="$ROLE" k8s_context="$KCTX"
+    else
+      # UPDATE PANE TITLE (Keep Tab/Window Name same)
+      tmux select-pane -T "$NAME"
+      
+      export NAME="$NAME"; export AWS_PROFILE="$ROLE"; export KUBECONFIG_CONTEXT="$KCTX"; export DEPLOY_ENV="$ENV"
+      local git_l="#[fg=#a6e3a1,bg=#1e1e2e]#[fg=#1e1e2e,bg=#a6e3a1,bold] #(git -C #{pane_current_path} rev-parse --abbrev-ref HEAD 2>/dev/null || echo 'no-git') #[fg=#a6e3a1,bg=#94e2d5]#[fg=#1e1e2e,bg=#94e2d5,bold] #(basename -s .git \$(git -C #{pane_current_path} config --get remote.origin.url 2>/dev/null) || echo 'local') "
+      local ctx_l="#[fg=#94e2d5,bg=${COLOR}]#[fg=#1e1e2e,bg=${COLOR},bold]Context: ${NAME} #[fg=${COLOR},bg=#1e1e2e]"
+      tmux set-option -g status-right "${git_l}${ctx_l}"
+      tmux refresh-client -S
+    fi
+  # --- Action: EDIT ---
+  elif [[ "$1" == "edit" ]]; then
+    ${EDITOR:-vi} "$CX_CONFIG"
+  fi
+}
