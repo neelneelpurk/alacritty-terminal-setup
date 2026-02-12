@@ -1,17 +1,18 @@
 name: <%= @settings["name"] %>
 root: ~
 
-pre_window:
-  - export NAME=<%= @settings["context_name"] %>
-  - export AWS_PROFILE=<%= @settings["aws_role"] %>
-  - export KUBECONFIG_CONTEXT=<%= @settings["k8s_context"] %>
-
 windows:
   - ops_terminal:
       layout: main-vertical
       panes:
         - |
-          # 1. Update Pane Title and Context
+          # 1. Export Env Vars & Setup Context
+          export NAME=<%= @settings["context_name"] %>
+          export AWS_PROFILE=<%= @settings["aws_role"] %>
+          export KUBECONFIG_CONTEXT=<%= @settings["k8s_context"] %>
+          echo "<%= @settings["context_name"] %>" > "$HOME/.config/cx/.current_context"
+          
+          # 2. Update Pane Title and K8s Context
           tmux select-pane -T "<%= @settings["context_name"] %>"
           if [ "$KUBECONFIG_CONTEXT" != "NA" ] && [ -n "$KUBECONFIG_CONTEXT" ]; then
             kubectl config use-context "$KUBECONFIG_CONTEXT" >/dev/null 2>&1
