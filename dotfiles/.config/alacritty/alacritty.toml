@@ -18,5 +18,28 @@ background = '#1e1e2e' # Matches the 'base' in Starship
 foreground = '#cdd6f4'
 
 [selection]
-# Automatically copy to clipboard when a selection is made
+# Automatically copy to clipboard when a selection is made (like iTerm2)
 save_to_clipboard = true
+
+# --- iTerm2-Level Keybindings ---
+# Allow clipboard operations to pass through to tmux
+[general]
+live_config_reload = true
+
+[[keyboard.bindings]]
+key = "C"
+mods = "Super"
+action = "Copy"
+
+[[keyboard.bindings]]
+key = "V"
+mods = "Super"
+action = "Paste"
+
+[[keyboard.bindings]]
+key = "N"
+mods = "Super"
+action = "CreateNewWindow"
+
+# Double-click selects word, triple-click selects line (Alacritty default)
+# Mouse drag auto-copies via save_to_clipboard above

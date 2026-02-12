@@ -52,8 +52,20 @@ cx() {
       echo "$NAME" > "$HOME/.config/cx/.current_context"
       
       export NAME="$NAME"; export AWS_PROFILE="$ROLE"; export KUBECONFIG_CONTEXT="$KCTX"; export DEPLOY_ENV="$ENV"
-      local git_l="#[fg=#a6e3a1,bg=#1e1e2e]#[fg=#1e1e2e,bg=#a6e3a1,bold]  #(/usr/bin/git -C #{pane_current_path} rev-parse --abbrev-ref HEAD 2>/dev/null || echo 'no-git') #[fg=#94e2d5,bg=#f5c2e7]#[fg=#1e1e2e,bg=#f5c2e7,bold]  #(basename -s .git \$(/usr/bin/git -C #{pane_current_path} config --get remote.origin.url 2>/dev/null) || echo 'local') "
-      local ctx_l="#[fg=#94e2d5,bg=${COLOR}]#[fg=#1e1e2e,bg=${COLOR},bold] Context: ${NAME} #[fg=${COLOR},bg=#1e1e2e]"
+
+      # Resolve color hex for tab bar
+      local COLOR_HEX=$(~/.config/tmux/get-tab-color.sh)
+
+      # Update tmux window/tab name to: dirname | context
+      local CURRENT_DIR=$(basename "$(tmux display-message -p '#{pane_current_path}')")
+      tmux rename-window "${CURRENT_DIR} | ${NAME}"
+
+      # Update the active tab style with context color
+      tmux set-option -g window-status-current-format "#[fg=#1e1e2e,bg=${COLOR_HEX},bold] #(~/.config/tmux/get-tab-name.sh #{pane_current_path}) #[fg=${COLOR_HEX},bg=#1e1e2e]"
+
+      # Update status right with context
+      local git_l="#[fg=#a6e3a1,bg=#1e1e2e]#[fg=#1e1e2e,bg=#a6e3a1,bold]  #(/usr/bin/git -C #{pane_current_path} rev-parse --abbrev-ref HEAD 2>/dev/null || echo 'no-git') #[fg=#94e2d5,bg=#f5c2e7]#[fg=#1e1e2e,bg=#f5c2e7,bold]  #(basename -s .git \$(/usr/bin/git -C #{pane_current_path} config --get remote.origin.url 2>/dev/null) || echo 'local') "
+      local ctx_l="#[fg=#94e2d5,bg=${COLOR_HEX}]#[fg=#1e1e2e,bg=${COLOR_HEX},bold] Context: ${NAME} #[fg=${COLOR_HEX},bg=#1e1e2e]"
       tmux set-option -g status-right "${git_l}${ctx_l}"
       tmux refresh-client -S
     fi
