@@ -1,5 +1,5 @@
 name: <%= @settings["name"] %>
-root: ~/projects
+root: ~
 
 pre_window:
   - export NAME=<%= @settings["context_name"] %>
@@ -17,4 +17,3 @@ windows:
             kubectl config use-context "$KUBECONFIG_CONTEXT" >/dev/null 2>&1
           fi
           clear
-          cx health

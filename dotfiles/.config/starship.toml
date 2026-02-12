@@ -2,28 +2,16 @@
 "$schema" = 'https://starship.rs/config-schema.json'
 
 format = """
-[](rose)\
+[](rose)\
 $os\
 $username\
-[](bg:peach fg:rose)\
+[](bg:peach fg:rose)\
 $directory\
-[](bg:green fg:peach)\
-$c\
-$elixir\
-$elm\
-$golang\
-$haskell\
-$java\
-$julia\
-$nodejs\
-$nim\
-$rust\
-$scala\
-[](fg:green bg:sapphire)\
+[](fg:peach bg:sapphire)\
 $docker_context\
-[](fg:sapphire bg:lavender)\
+[](fg:sapphire bg:lavender)\
 $time\
-[ ](fg:lavender)\
+[ ](fg:lavender)\
 $line_break$character"""
 
 # Disable the blank line at the start of the prompt
@@ -63,47 +51,49 @@ truncation_symbol = "…/"
 "Pictures" = "󰄄 "
 
 [nodejs]
-symbol = ""
-style = "bg:green fg:base"
-format = '[[ $symbol ($version) ]($style)]($style)'
+disabled = true
 
 [rust]
-symbol = ""
-style = "bg:green fg:base"
-format = '[[ $symbol ($version) ]($style)]($style)'
+disabled = true
 
 [golang]
-symbol = ""
-style = "bg:green fg:base"
-format = '[[ $symbol ($version) ]($style)]($style)'
+disabled = true
 
 [php]
-symbol = ""
-style = "bg:green fg:base"
-format = '[[ $symbol ($version) ]($style)]($style)'
+disabled = true
 
 [java]
-symbol = " "
-style = "bg:green fg:base"
-format = '[[ $symbol ($version) ]($style)]($style)'
+disabled = true
 
 [kotlin]
-symbol = ""
-style = "bg:green fg:base"
-format = '[[ $symbol ($version) ]($style)]($style)'
+disabled = true
 
 [haskell]
-symbol = ""
-style = "bg:green fg:base"
-format = '[[ $symbol ($version) ]($style)]($style)'
+disabled = true
 
 [python]
-symbol = ""
-style = "bg:green fg:base"
-format = '[[ $symbol ($version) ]($style)]($style)'
+disabled = true
+
+[c]
+disabled = true
+
+[elixir]
+disabled = true
+
+[elm]
+disabled = true
+
+[julia]
+disabled = true
+
+[nim]
+disabled = true
+
+[scala]
+disabled = true
 
 [docker_context]
-symbol = ""
+symbol = ""
 style = "bg:sapphire fg:base"
 format = '[[ $symbol $context ]($style)]($style)'
 
